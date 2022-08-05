@@ -39,6 +39,7 @@ body {
   justify-content: center;
   padding: 0;
   margin: 0;
+  overflow-x:hidden;
 }
 
 h1 {
@@ -154,12 +155,18 @@ li {
   padding: 0 5vw 0 5vw;
   height: 91vh;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
 }
 
 .button-wrapper {
   display: flex;
   justify-content: space-evenly;
+}
+
+.button-bar {
+  height: 2em;
+  min-height: 0;
+  flex: 1 1 1px;
 }
 
 .flex-container {

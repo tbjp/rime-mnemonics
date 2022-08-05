@@ -1,10 +1,12 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import { fly } from 'svelte/transition';
+    import { onMount } from 'svelte'
+    import type { loop_guard } from 'svelte/internal';
+    import { fly } from 'svelte/transition'
+    import { openView } from '/src/store/stores'
   
     let meaning = null;
     let prevMeaning = null;
-    let vocab = null;
+    let vocab:String = null;
     let prevVocab = null;
     let rhymesLoading = false;
     let fonesLoading = false;
@@ -57,10 +59,22 @@
   }
   
   function prepQuery(query, type, options) {
+    console.log(typeof query);
+    let typeCode = null;
       if (query !== null) {
-      const trimmed = query.trim();
-      const preppedQuery = type + trimmed + options;
-      return preppedQuery;
+        if (type == "A") {
+            typeCode = "rel_rhy=";
+        } else {
+            const boolean = query.includes("*");
+            if (query.includes("*")) {
+                typeCode = "sp=";
+            } else {
+                typeCode = "sl=";
+            }
+        };
+        const trimmed = query.trim();
+        const preppedQuery = typeCode + trimmed + options;
+        return preppedQuery;
       } else {
       return null
       };
@@ -194,7 +208,19 @@
   <main>
     <div id="page-container">
       <div class="header"><h1>Rime</h1></div>
+      <!-- {#if $openView == 'options'}
       <div class="flex-container">
+        <button on:click={() => {$openView = null}}>Options</button>
+        </div>
+        <div class="flex-container options"></div>
+      {/if}
+      {#if $openView == null}
+      <div class="flex-container">
+        <button on:click={() => {$openView = 'options'}}>Options</button>
+      </div>
+      {/if} -->
+      {#if $openView == null}
+      <div class="flex-container" in:fly="{{ x:-200}}" out:fly="{{ x:200}}">
         <input type="text" placeholder="Meaning" id="rimeInput" 
         bind:value={meaning}
         on:input={submitTimerM}
@@ -204,7 +230,7 @@
         on:input={submitTimerV}
         class:glowUp="{glowUp2 === true}">
       </div>
-      <div class="flex-container lists">
+      <div class="flex-container lists" in:fly="{{ x:-200}}" out:fly="{{ x:200}}">
         <ul>
           {#if rhymesLoading == true}
             <li in:fly="{{ y:-200}}" class="placeholder">Loading...</li>
@@ -234,12 +260,12 @@
           {/if}
         </ul>
       </div>
-  
       <div hidden class="button-wrapper">
-        <button hidden id="rimesButton" on:click={ () => {rhymesPromise = getNewList(meaning, "rel_rhy=", "&md=f&max=80", "r", prevMeaning);}}>
+        <button hidden id="rimesButton" on:click={ () => {rhymesPromise = getNewList(meaning, "A", "&md=f&max=80", "r", prevMeaning);}}>
           Find Rimes</button>
-        <button hidden id="fonesButton" on:click={ () => {fonesPromise = getNewList(vocab, "sl=", "&md=f&max=80", "f", prevVocab);}}>
+        <button hidden id="fonesButton" on:click={ () => {fonesPromise = getNewList(vocab, "B", "&md=f&max=80", "f", prevVocab);}}>
           Find Fones</button>
       </div>
+      {/if}
     </div>
   </main>
