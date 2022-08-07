@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { onMount } from 'svelte'
+    import { onMount } from 'svelte';
     import type { loop_guard } from 'svelte/internal';
-    import { fly } from 'svelte/transition'
-    import { openView } from '/src/store/stores'
+    import { fly } from 'svelte/transition';
+    import { openView } from '/src/store/stores';
   
     let meaning = null;
     let prevMeaning = null;
@@ -30,7 +30,7 @@
         resetList2Timer();
         prevVocab = vocab;
       };
-      const preppedQuery = prepQuery(query, type, options);
+      const preppedQuery = prepQuery(query, load_flag, options);
       const promise = fetchRhymes(preppedQuery, load_flag);
       promise.then(
         function(value) {
@@ -45,7 +45,7 @@
               {fonesError = false};
             };
           } else {
-          sortResults(value, load_flag);
+          sortResults(value, load_flag, query);
           if (load_flag == "r") {rhymesError = false} else {fonesError = false}
           }
         }).catch(error => {
@@ -62,15 +62,14 @@
     console.log(typeof query);
     let typeCode = null;
       if (query !== null) {
-        if (type == "A") {
-            typeCode = "rel_rhy=";
+        if (query.includes("*") && query.length > 1) {
+          typeCode = "sp=";
+        } else if (type == "r" && !query.includes("*")) {
+          typeCode = "rel_rhy=";
+        } else if (type == "f" && !query.includes("*")) {
+          typeCode = "sl=";
         } else {
-            const boolean = query.includes("*");
-            if (query.includes("*")) {
-                typeCode = "sp=";
-            } else {
-                typeCode = "sl=";
-            }
+          return null
         };
         const trimmed = query.trim();
         const preppedQuery = typeCode + trimmed + options;
@@ -97,21 +96,25 @@
     }
   };
   
-  function sortResults(wordList, load_flag) {
+  function sortResults(wordList, load_flag, query) {
       const listA = wordList;
-      listA.forEach((wl) => {
+      console.log(wordList);
+      const listB = listA.filter(wl => wl.word.length != 1 &&
+        wl.word != query.replace("*","")
+        );
+      listB.forEach((wl) => {
           const frequency = parseFloat(wl.tags[0].slice(2,11));
           wl.comboScore = wl.score + (frequency * 10);
       });
-      listA.sort((a, b) => {
+      listB.sort((a, b) => {
           return b.comboScore - a.comboScore;
       });
-      console.log(listA);
+      console.log(listB);
       if (load_flag == "r") {
-        rhymesList = listA;
+        rhymesList = listB;
         rhymesLoading = false;
       } else {
-        fonesList = listA;
+        fonesList = listB;
         fonesLoading = false;
       };
     };
@@ -122,7 +125,6 @@
   
   function submitTimerM() {
     resetList1Timer();
-    glowUp1 = true;
     console.log("Rime Input Event Called");
     console.log(meaning)
     if (!isNewValidQuery(prevMeaning, meaning)) {
@@ -130,11 +132,12 @@
       glowUp1 = false;
       return
     } else {
-    meaningTimer = setTimeout(() => {
-      document.getElementById("rimesButton").click();
-      prevMeaning = meaning;
-      glowUp1 = false;
-      console.log("Called API for meaning.")
+      glowUp1 = true;
+      meaningTimer = setTimeout(() => {
+        document.getElementById("rimesButton").click();
+        prevMeaning = meaning;
+        glowUp1 = false;
+        console.log("Called API for meaning.")
     }, 2000)};
   };  
   
@@ -147,34 +150,48 @@
       glowUp2 = false;
       return
     } else {
-    vocabTimer = setTimeout(() => {
-      document.getElementById("fonesButton").click();
-      prevVocab = vocab;
-      glowUp2 = false;
-      console.log("Called API for vocab.")
-    }, 2000)};
+      vocabTimer = setTimeout(() => {
+        document.getElementById("fonesButton").click();
+        prevVocab = vocab;
+        glowUp2 = false;
+        console.log("Called API for vocab.")
+      }, 2000)};
   };
   
+  function clearA() {
+    meaning = "";
+    rhymesList = null;
+    prevMeaning = "";
+    resetList1Timer();
+  };
+
+  function clearB() {
+    vocab = null;
+    fonesList = null;
+    prevVocab = null;
+    resetList2Timer();
+  };
+
   function resetList1Timer() {
+    glowUp1 = false;
     const element = document.getElementById("rimeInput");
     clearTimeout(meaningTimer);
     element.classList.remove("glowUp");
     void element.offsetWidth; // This restarts the animation.
-    element.classList.add("glowUp");
-    glowUp1 = false;
+    //element.classList.add("glowUp"); // Svelte adds it back.
   };
   
   function resetList2Timer() {
+    glowUp2 = false;
     const element = document.getElementById("foneInput");
     clearTimeout(vocabTimer);
     element.classList.remove("glowUp");
     void element.offsetWidth; // This restarts the animation.
-    element.classList.add("glowUp");
-    glowUp2 = false;
+    //element.classList.add("glowUp"); // Svelte adds it back.
   };
   
   function isNewValidQuery(prevQuery, newQuery) {
-    if (newQuery == prevQuery || !newQuery.trim()) {
+    if (newQuery == prevQuery || !newQuery.trim() || newQuery == "") {
       return false;
     } else {
       return true;
@@ -221,14 +238,20 @@
       {/if} -->
       {#if $openView == null}
       <div class="flex-container" in:fly="{{ x:-200}}" out:fly="{{ x:200}}">
-        <input type="text" placeholder="Meaning" id="rimeInput" 
-        bind:value={meaning}
-        on:input={submitTimerM}
-        class:glowUp="{glowUp1 === true}">
-        <input type="text" placeholder="Phonetic Vocab" id="foneInput" 
-        bind:value={vocab} 
-        on:input={submitTimerV}
-        class:glowUp="{glowUp2 === true}">
+        <div class="clearable-input">
+          <input type="text" placeholder="Meaning" id="rimeInput" 
+          bind:value={meaning}
+          on:input={submitTimerM}
+          class:glowUp="{glowUp1 === true}">
+          <span class="x-button" on:click={clearA}>&times;</span>
+        </div>
+        <div class="clearable-input">
+          <input type="text" placeholder="Phonetic Vocab" id="foneInput" 
+          bind:value={vocab} 
+          on:input={submitTimerV}
+          class:glowUp="{glowUp2 === true}">
+          <span class="x-button" on:click={clearB}>&times;</span>
+        </div>
       </div>
       <div class="flex-container lists" in:fly="{{ x:-200}}" out:fly="{{ x:200}}">
         <ul>
