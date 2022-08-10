@@ -56,23 +56,35 @@ h1 {
 button {
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.8em 1.2em;
+  padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #00b768;
+  color:#daf6ff;
+  background-color: #535bf2;
   cursor: pointer;
   transition: border-color 0.25s;
   flex: 1;
-  margin: 1em;
+  margin: 0.4em;
   min-height: 1em;
+  max-width: 15em;
 }
 button:hover {
-  background-color: #00d77a;
+  background-color: #747bff;
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.cog {
+  flex-grow: 0.2;
+  font-size: xx-large;
+  padding: 0;
+  margin: 0 0.2em;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
 }
 
 select {
@@ -153,11 +165,13 @@ li {
   display: flex;
   gap: 2vh;
   min-width: 50vw;
-  padding: 0 5vw 0 5vw;
-  height: 91vh;
+  width:100%;
+  /* padding: 0 5vw 0 5vw; */
+  height: 90vh;
   flex-direction: column;
-  justify-content: start;
+  align-items: center;
 }
+
 
 .button-wrapper {
   display: flex;
@@ -195,6 +209,7 @@ li {
   display: flex;
   flex-direction: row;
   min-width: 0;
+  max-width: 50em;
 }
 
 .header {
@@ -206,10 +221,45 @@ li {
 .lists {
   flex: 1 1 1px;
   min-height: 0;
+  min-width: 25em;
 }
 
 .lists * {
   background-color: #282828;
+}
+
+.options-wrapper {
+  flex: 1 1 1px;
+  height:100%;
+  min-width: 20em;
+  max-width: 95%;
+  background-color: #535bf2
+}
+
+
+.overlap-grid {
+  display:grid;
+  height: 90%;
+  width:100vw;
+}
+
+.overlap-cell1,
+.overlap-cell2 {
+  grid-area: 1/1/2/2;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap:2vh;
+  height: 100%;
+}
+
+.column-stretch {
+  display:flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+  gap:2vh;
 }
 
 @media (prefers-color-scheme: light) {
@@ -221,14 +271,16 @@ li {
     color: #747bff;
   }
   button {
-    background-color: #f9f9f9;
+    color:#ffffff;
+    background-color: #747bff
   }
   .lists * {
     background-color: #f9f9f9;
   }
   button:hover {
-    background-color: #daf6ff;
+    background-color: #646cff
   }
+
   .placeholder {
     color: #656565;
   }

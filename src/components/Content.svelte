@@ -1,7 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import type { loop_guard } from 'svelte/internal';
-    import { fly } from 'svelte/transition';
+    import { fly, slide } from 'svelte/transition';
+    import { flip } from 'svelte/animate';
     import { openView } from '/src/store/stores';
   
     let meaning = null;
@@ -222,22 +223,14 @@
   });
   </script>
   
-  <main>
-    <div id="page-container">
-      <div class="header"><h1>Rime</h1></div>
-      <!-- {#if $openView == 'options'}
+
+<div id="page-container">
+  <div class="header"><h1>Rime</h1></div>
+  <div class="overlap-grid">
+    {#if $openView == null}
+    <div class="overlap-cell1"  transition:fly="{{ x:800, opacity:1}}">
+    <div class="column-stretch">
       <div class="flex-container">
-        <button on:click={() => {$openView = null}}>Options</button>
-        </div>
-        <div class="flex-container options"></div>
-      {/if}
-      {#if $openView == null}
-      <div class="flex-container">
-        <button on:click={() => {$openView = 'options'}}>Options</button>
-      </div>
-      {/if} -->
-      {#if $openView == null}
-      <div class="flex-container" in:fly="{{ x:-200}}" out:fly="{{ x:200}}">
         <div class="clearable-input">
           <input type="text" placeholder="Meaning" id="rimeInput" 
           bind:value={meaning}
@@ -253,7 +246,7 @@
           <span class="x-button" on:click={clearB}>&times;</span>
         </div>
       </div>
-      <div class="flex-container lists" in:fly="{{ x:-200}}" out:fly="{{ x:200}}">
+      <div class="flex-container lists">
         <ul>
           {#if rhymesLoading == true}
             <li in:fly="{{ y:-200}}" class="placeholder">Loading...</li>
@@ -283,12 +276,24 @@
           {/if}
         </ul>
       </div>
-      <div hidden class="button-wrapper">
-        <button hidden id="rimesButton" on:click={ () => {rhymesPromise = getNewList(meaning, "A", "&md=f&max=80", "r", prevMeaning);}}>
+      <div class="button-wrapper">
+        <button id="rimesButton" on:click={ () => {rhymesPromise = getNewList(meaning, "A", "&md=f&max=80", "r", prevMeaning);}}>
           Find Rimes</button>
-        <button hidden id="fonesButton" on:click={ () => {fonesPromise = getNewList(vocab, "B", "&md=f&max=80", "f", prevVocab);}}>
+          <button on:click={() => {$openView = 'options'}} class="cog">&#11041;</button>
+        <button id="fonesButton" on:click={ () => {fonesPromise = getNewList(vocab, "B", "&md=f&max=80", "f", prevVocab);}}>
           Find Fones</button>
       </div>
-      {/if}
+      </div>
     </div>
-  </main>
+    {/if}
+    {#if $openView == 'options'}
+    <div class="overlap-cell2"  transition:fly="{{ x:-800, opacity:1}}">
+      <div class="options-wrapper">Options go here.</div>
+      <div class="button-wrapper">
+        <button on:click={() => {$openView = null}}>Options</button>
+      </div>
+
+    </div>
+    {/if}
+  </div>
+</div>
