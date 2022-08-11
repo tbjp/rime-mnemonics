@@ -1,9 +1,9 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import type { loop_guard } from 'svelte/internal';
-    import { fly, slide } from 'svelte/transition';
-    import { flip } from 'svelte/animate';
-    import { openView } from '/src/store/stores';
+    import { fly } from 'svelte/transition';
+    import { openView } from '../store/stores';
+    import Options from './Options.svelte';
   
     let meaning = null;
     let prevMeaning = null;
@@ -228,11 +228,11 @@
   <div class="header"><h1>Rime</h1></div>
   <div class="overlap-grid">
     {#if $openView == null}
-    <div class="overlap-cell1"  transition:fly="{{ x:800, opacity:1}}">
+    <div class="overlap-cell1"  transition:fly="{{ x:800, opacity:0}}">
     <div class="column-stretch">
       <div class="flex-container">
         <div class="clearable-input">
-          <input type="text" placeholder="Meaning" id="rimeInput" 
+          <input type="text" placeholder="Meaning" id="rimeInput"
           bind:value={meaning}
           on:input={submitTimerM}
           class:glowUp="{glowUp1 === true}">
@@ -279,7 +279,7 @@
       <div class="button-wrapper">
         <button id="rimesButton" on:click={ () => {rhymesPromise = getNewList(meaning, "A", "&md=f&max=80", "r", prevMeaning);}}>
           Find Rimes</button>
-          <button on:click={() => {$openView = 'options'}} class="cog">&#11041;</button>
+          <button on:click={() => {$openView = 'options'}} class="cog">&#11042;</button>
         <button id="fonesButton" on:click={ () => {fonesPromise = getNewList(vocab, "B", "&md=f&max=80", "f", prevVocab);}}>
           Find Fones</button>
       </div>
@@ -287,13 +287,49 @@
     </div>
     {/if}
     {#if $openView == 'options'}
-    <div class="overlap-cell2"  transition:fly="{{ x:-800, opacity:1}}">
-      <div class="options-wrapper">Options go here.</div>
-      <div class="button-wrapper">
-        <button on:click={() => {$openView = null}}>Options</button>
-      </div>
-
-    </div>
+    <Options/>
     {/if}
   </div>
 </div>
+
+<style>
+  @media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: var(--mc3);
+  }
+  button {
+    color:var(--white-text);
+    background-color: var(--mc3);
+  }
+  .lists * {
+    background-color: #f9f9f9;
+  }
+  button:hover {
+    background-color: var(--mc2)
+  }
+
+  .placeholder {
+    color: var(--grey-text);
+  }
+
+  .clearable-input > input {
+    border-color: #bdc0ff;
+    background-color: #f9f9f9;
+  }
+  .clearable-input > input:focus {
+    outline-color: #060714;
+  }
+
+  .options-wrapper {
+    background-color: #f9f9f9;
+  }
+
+  h2 {
+    color: var(--mc3);
+  }
+}
+</style>

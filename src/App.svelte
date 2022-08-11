@@ -3,5 +3,5 @@
 </script>
 
 <main>
-  <Content />
+  <Content/>
 </main>

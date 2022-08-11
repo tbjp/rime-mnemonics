@@ -2,6 +2,15 @@
   --glowStart: #242424;
   --glowPeak: #535bf2;
   --glowEnd: #53d5f2;
+  --bg1: #242424;
+  --bg2: #282828;
+  --bg3: #313131;
+  --mc1: #535bf2;
+  --mc2: #646cff;
+  /* Button Hover */
+  --mc3: #747bff;
+  --white-text: #daf6ff;
+  --grey-text:#656565;
 
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -23,11 +32,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--mc2);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--mc1);
 }
 
 body {
@@ -50,7 +59,7 @@ h1 {
   margin: 0;
   margin-top: 3vh;
   text-align: center;
-  color:#646cff;
+  color:var(--mc2);
 }
 
 button {
@@ -60,8 +69,8 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  color:#daf6ff;
-  background-color: #535bf2;
+  color: var(--white-text);
+  background-color: var(--mc1);
   cursor: pointer;
   transition: border-color 0.25s;
   flex: 1;
@@ -70,7 +79,7 @@ button {
   max-width: 15em;
 }
 button:hover {
-  background-color: #747bff;
+  background-color: var(--mc3);
 }
 button:focus,
 button:focus-visible {
@@ -88,10 +97,13 @@ button:focus-visible {
 }
 
 select {
+  min-width: 5em;
+  min-height: 2em;
+  padding: 0 10px;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 2px;
   -webkit-appearance: menulist-textfield;
-  height: 45px;
-  min-height: 10em;
-  max-height: 100%;
 }
 
 @keyframes glow-up {
@@ -109,7 +121,7 @@ select {
     box-shadow: 0px 0px 0px 1px var(--glowEnd);}
 }
 
-input {
+.clearable-input > input {
   width: 100%;
   min-width: 0;
   height: 1em;
@@ -118,11 +130,12 @@ input {
   font-size: 1em;
   border-radius: 5px;
   border-style: solid;
-  border-color: #242424;
+  border-color: var(--bg1);
+  background-color: var(--bg3);
   -webkit-appearance: none;
 }
 
-input:focus {
+.clearable-input > input:focus {
   outline-width:thin;
 }
 
@@ -154,11 +167,10 @@ li {
   font-size: 1em;
   width: 80%;
   text-align: left;
-  background-color:#00b768;
 }
 
 .placeholder {
-  color: #656565;
+  color: var(--grey-text);
 }
 
 #page-container {
@@ -201,7 +213,7 @@ li {
   padding: 0 0.9em;
   line-height: 1.8em;
   cursor: pointer;
-  color:#747bff;
+  color:var(--mc2);
 }
 
 
@@ -225,18 +237,76 @@ li {
 }
 
 .lists * {
-  background-color: #282828;
+  background-color: var(--bg2);
 }
 
 .options-wrapper {
-  flex: 1 1 1px;
+  flex: 1 1 auto;
   height:100%;
   min-width: 20em;
+  width: min-content;
   max-width: 95%;
-  background-color: #535bf2
+  background-color: var(--bg3);
+  border-radius: 5px;
+  padding: 1em;
+  text-align: center;
 }
 
+.options-wrapper > h2 {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 0.5em;
+}
 
+.options-flexbox {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  margin: 0;
+  height: 80%;
+}
+
+.options-flexbox > ul {
+  overflow-y: hidden;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.options-labels {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  grid-row-start: 1;
+}
+
+.options-options {
+  grid-column-start: 2;
+  grid-row-start: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.options-options > li > input {
+  scale: 1.5;
+  margin: 0 4%;
+  padding: 0;
+}
+
+.options-flexbox > ul > li {
+  height: 15%;
+  padding: 0;
+  margin: 0 1em;
+}
+
+.options-flexbox > .options-options > li {
+  padding: 1% 0 0 0;
+  margin: 0 1em;
+}
+
+.options-flexbox > ul > li > * {
+  width: auto;
+  float:right;
+}
 .overlap-grid {
   display:grid;
   height: 90%;
@@ -268,27 +338,36 @@ li {
     background-color: #ffffff;
   }
   a:hover {
-    color: #747bff;
+    color: var(--mc3);
   }
   button {
-    color:#ffffff;
-    background-color: #747bff
+    color:var(--white-text);
+    background-color: var(--mc3);
   }
   .lists * {
     background-color: #f9f9f9;
   }
   button:hover {
-    background-color: #646cff
+    background-color: var(--mc2)
   }
 
   .placeholder {
-    color: #656565;
+    color: var(--grey-text);
   }
-  input {
+
+  .clearable-input > input {
     border-color: #bdc0ff;
+    background-color: #f9f9f9;
   }
-  input:focus {
-    border-color:#ffffff00;
-    outline-color: #1c1f53;
+  .clearable-input > input:focus {
+    outline-color: #060714;
+  }
+
+  .options-wrapper {
+    background-color: #f9f9f9;
+  }
+
+  h2 {
+    color: var(--mc3);
   }
 }
