@@ -9,8 +9,9 @@
   --mc2: #646cff;
   /* Button Hover */
   --mc3: #747bff;
-  --white-text: #daf6ff;
+  --white-text: #effbff;
   --grey-text:#656565;
+  --light-grey-text: #939393;
 
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -74,7 +75,7 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
   flex: 1;
-  margin: 0.4em;
+  margin: 0 0.4em;
   min-height: 1em;
   max-width: 15em;
 }
@@ -88,12 +89,7 @@ button:focus-visible {
 
 .cog {
   flex-grow: 0.2;
-  font-size: xx-large;
-  padding: 0;
-  margin: 0 0.2em;
-  color: transparent;
-  background-clip: text;
-  -webkit-background-clip: text;
+  text-decoration: none;
 }
 
 select {
@@ -179,7 +175,7 @@ li {
   min-width: 50vw;
   width:100%;
   /* padding: 0 5vw 0 5vw; */
-  height: 90vh;
+  height: 85vh;
   flex-direction: column;
   align-items: center;
 }
@@ -190,10 +186,9 @@ li {
   justify-content: space-evenly;
 }
 
-.button-bar {
-  height: 2em;
-  min-height: 0;
-  flex: 1 1 1px;
+.button-wrapper-wrap {
+  flex-wrap:wrap;
+  row-gap: 2vh;
 }
 
 .clearable-input {
@@ -231,9 +226,9 @@ li {
 }
 
 .lists {
-  flex: 1 1 1px;
+  flex: 1 1 100px;
   min-height: 0;
-  min-width: 25em;
+  min-width: 2em;
 }
 
 .lists * {
@@ -256,9 +251,11 @@ li {
   padding: 0;
   margin: 0;
   margin-bottom: 0.5em;
+  color:var(--light-grey-text);
 }
 
 .options-flexbox {
+  /* need to change name to grid */
   display: grid;
   grid-template-columns: 2fr 1fr;
   margin: 0;
@@ -277,6 +274,10 @@ li {
   grid-column-start: 1;
   grid-column-end: 4;
   grid-row-start: 1;
+}
+
+.options-flexbox > .options-labels > li > label {
+  float:left;
 }
 
 .options-options {
@@ -322,7 +323,32 @@ li {
   align-items: center;
   gap:2vh;
   height: 100%;
+  min-height: 0;
 }
+
+.text-wrapper {
+  flex: 1 2 1em;
+  height:100%;
+  min-height: 0;
+  min-width: 50%;
+  width: auto;
+  max-width: 40em;
+  background-color: var(--bg3);
+  border-radius: 5px;
+  padding: 1em;
+  margin: 0 5%;
+  text-align: left;
+  overflow-y: scroll;
+}
+
+.text-wrapper > h2 {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 0.5em;
+  text-align: center;
+  color:var(--light-grey-text);
+}
+
 
 .column-stretch {
   display:flex;
@@ -332,12 +358,56 @@ li {
   gap:2vh;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.explain-flexbox {
+  display: flex;
+  flex-direction: row;
+  flex-wrap:wrap;
+}
+
+.explain-flexbox > .explain-box {
+  flex: 1 1 1em;
+  width: 5em;
+  min-height: 4em;
+  height: min-content;
+  background-color: var(--bg1);
+  margin: 0.5em;
+  padding: 0.5em;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.explain-flexbox > .arrow {
+  flex: 0 1 1px;
+  height: 5em;
+  margin: 0;
+  height: 0.5em;
+  padding: 2.5em 0;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
+    --glowStart: #242424;
+    --glowPeak: #535bf2;
+    --glowEnd: #53d5f2;
+    --bg1: #ffffff;
+    --bg2: #f9f9f9;
+    --bg3: #f2f1f1;
+    --mc1: #535bf2;
+    --mc2: #646cff;
+    /* Button Hover */
+    --mc3: #747bff;
+    --white-text: #effbff;
+    --grey-text:#939393;
+    --light-grey-text: #656565;
+
+    color: hsl(237, 86%, 5%);
     background-color: #ffffff;
   }
-  a:hover {
+  /* a:hover {
     color: var(--mc3);
   }
   button {
@@ -369,5 +439,5 @@ li {
 
   h2 {
     color: var(--mc3);
-  }
+  } */
 }

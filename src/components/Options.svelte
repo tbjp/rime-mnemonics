@@ -8,22 +8,22 @@ import { openView, optionDarkMode, optionAutoSubmit, optionButtons, optionNearRh
         <h2>Options</h2>
         <div class="options-flexbox">
             <ul class="options-labels">
-                <li>Colour Scheme</li>
-                <li>Auto-submit input</li>
-                <li>Enable submit buttons</li>
-                <li>Include near rhymes</li>
-                <li>Sort by topic mode</li>
+                <li><label for="slct1-label">Colour Scheme</label></li>
+                <li><label for="chk1-label">Auto-submit input</label></li>
+                <li><label for="chk2-label">Enable submit buttons</label></li>
+                <li><label for="chk3-label">Include near rhymes</label></li>
+                <li><label for="chk4-label">Sort by topic mode</label></li>
             </ul>
             <ul class="options-options">
-                <li><select bind:value={$optionDarkMode}>
+                <li><select bind:value={$optionDarkMode} id="slct1-label">
                     <option>Dark</option>
                     <option>Light</option>
                     <option>System</option>
                 </select></li>
-                <li><input type="checkbox" bind:checked={$optionAutoSubmit}></li>
-                <li><input type="checkbox" bind:checked={$optionButtons}></li>
-                <li><input type="checkbox" bind:checked={$optionNearRhymes}></li>
-                <li><input type="checkbox" bind:checked={$optionTopicMode}></li>
+                <li><input type="checkbox" bind:checked={$optionAutoSubmit} id="chk1-label"></li>
+                <li><input type="checkbox" bind:checked={$optionButtons} id="chk2-label"></li>
+                <li><input type="checkbox" bind:checked={$optionNearRhymes} id="chk3-label"></li>
+                <li><input type="checkbox" bind:checked={$optionTopicMode} id="chk4-label"></li>
             </ul>
         </div>
     </div>

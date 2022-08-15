@@ -2,8 +2,10 @@
     import { onMount } from 'svelte';
     import type { loop_guard } from 'svelte/internal';
     import { fly } from 'svelte/transition';
-    import { openView } from '../store/stores';
+    import { openView, optionDarkMode, optionAutoSubmit, optionButtons, optionNearRhymes, optionTopicMode } from '../store/stores';
     import Options from './Options.svelte';
+    import About from './About.svelte';
+    import Help from './Help.svelte';
   
     let meaning = null;
     let prevMeaning = null;
@@ -125,21 +127,25 @@
   let vocabTimer;
   
   function submitTimerM() {
-    resetList1Timer();
-    console.log("Rime Input Event Called");
-    console.log(meaning)
-    if (!isNewValidQuery(prevMeaning, meaning)) {
-      console.log("Did not submit meaning to API.");
-      glowUp1 = false;
-      return
-    } else {
-      glowUp1 = true;
-      meaningTimer = setTimeout(() => {
-        document.getElementById("rimesButton").click();
-        prevMeaning = meaning;
+    if ($optionAutoSubmit) {
+      resetList1Timer();
+      console.log("Rime Input Event Called");
+      console.log(meaning)
+      if (!isNewValidQuery(prevMeaning, meaning)) {
+        console.log("Did not submit meaning to API.");
         glowUp1 = false;
-        console.log("Called API for meaning.")
-    }, 2000)};
+        return
+      } else {
+        glowUp1 = true;
+        meaningTimer = setTimeout(() => {
+          document.getElementById("rimesButton").click();
+          prevMeaning = meaning;
+          glowUp1 = false;
+          console.log("Called API for meaning.")
+      }, 2000)};
+    } else {
+      return
+    }
   };  
   
   function submitTimerV() {
@@ -158,7 +164,9 @@
         console.log("Called API for vocab.")
       }, 2000)};
   };
-  
+
+  // Functions for the little X buttons
+
   function clearA() {
     meaning = "";
     rhymesList = null;
@@ -198,31 +206,32 @@
       return true;
     }
   };
-  
-  onMount( function() {
-    const rimeInputId = document.getElementById("rimeInput");
-    const foneInputId = document.getElementById("foneInput");
-  
-    rimeInputId.addEventListener("keypress", function(event) {
-      if (event.key === "Enter") {
-        if (document.getElementById('rimeInput') === document.activeElement) {
-          event.preventDefault();
-          document.getElementById("rimesButton").click();
-          } 
-        };
-      });
-  
-    foneInputId.addEventListener("keypress", function(event) {
-      if (event.key === "Enter") {
-        if (document.getElementById('foneInput') === document.activeElement) {
-          event.preventDefault();
-          document.getElementById("fonesButton").click();
-          } 
-        };
-      });
-  });
-  </script>
-  
+
+// Handle enter key on input fields
+
+  function handleKeydown(event) {
+    if (event.key !== 'Enter') return;
+    console.log(`Enter press on ${event.target.id}.`);
+    if (event.target.id == 'rimeInput') {
+      event.preventDefault();
+      document.getElementById("rimesButton").click();
+    } else if (event.target.id = 'foneInput') {
+      event.preventDefault();
+      document.getElementById("fonesButton").click();
+    } else { return }
+  }
+
+// Handle shortcuts on window
+  function handleWindowKeydown(event) {
+    if ($openView !== null) return;
+    if (event.altKey == true && event.key == 'c') {
+      clearA();
+      clearB();
+    };
+  };
+</script>
+
+<svelte:window on:keydown={handleWindowKeydown}/>
 
 <div id="page-container">
   <div class="header"><h1>Rime</h1></div>
@@ -235,6 +244,7 @@
           <input type="text" placeholder="Meaning" id="rimeInput"
           bind:value={meaning}
           on:input={submitTimerM}
+          on:keydown={handleKeydown}
           class:glowUp="{glowUp1 === true}">
           <span class="x-button" on:click={clearA}>&times;</span>
         </div>
@@ -242,6 +252,7 @@
           <input type="text" placeholder="Phonetic Vocab" id="foneInput" 
           bind:value={vocab} 
           on:input={submitTimerV}
+          on:keydown={handleKeydown}
           class:glowUp="{glowUp2 === true}">
           <span class="x-button" on:click={clearB}>&times;</span>
         </div>
@@ -253,7 +264,7 @@
           {:else if rhymesError == true}
             <li in:fly="{{ y:-200}}" class="placeholder">{fetchErrorMsg}</li>
           {:else if rhymesList == null}
-            <li in:fly="{{ y:-200}}" class="placeholder">Rhymes go here</li>
+            <li in:fly="{{ y:-200}}" class="placeholder">Rhyming words</li>
           {:else} 
             {#each rhymesList as rhyme}
               <li in:fly="{{ y:-200}}" out:fly="{{ y:200}}">
@@ -267,7 +278,7 @@
           {:else if fonesError == true}
             <li in:fly="{{ y:-200}}" class="placeholder">{fetchErrorMsg}</li>
           {:else if fonesList == null}
-            <li in:fly="{{ y:-200}}" class="placeholder">Fones go here</li>  
+            <li in:fly="{{ y:-200}}" class="placeholder">Similar sounding words</li>  
           {:else} 
             {#each fonesList as fone}
               <li in:fly="{{ y:-200}}" out:fly="{{ y:200}}">
@@ -276,12 +287,20 @@
           {/if}
         </ul>
       </div>
+      <div class="button-wrapper" class:hidden="{!$optionButtons}">
+        <button id="rimesButton" 
+          on:click={ () => {rhymesPromise = getNewList(meaning, "A", "&md=f&max=80", "r", prevMeaning);}}>
+          Find Rimes
+        </button>
+           <button id="fonesButton" 
+           on:click={ () => {fonesPromise = getNewList(vocab, "B", "&md=f&max=80", "f", prevVocab);}}>
+          Find Fones
+        </button>
+      </div>
       <div class="button-wrapper">
-        <button id="rimesButton" on:click={ () => {rhymesPromise = getNewList(meaning, "A", "&md=f&max=80", "r", prevMeaning);}}>
-          Find Rimes</button>
-          <button on:click={() => {$openView = 'options'}} class="cog">&#11042;</button>
-        <button id="fonesButton" on:click={ () => {fonesPromise = getNewList(vocab, "B", "&md=f&max=80", "f", prevVocab);}}>
-          Find Fones</button>
+        <button on:click={() => {$openView = 'about'}}>About</button>
+        <button on:click={() => {$openView = 'options'}} class="cog">&#11042;</button>
+        <button on:click={() => {$openView = 'help'}}>Help</button>
       </div>
       </div>
     </div>
@@ -289,47 +308,12 @@
     {#if $openView == 'options'}
     <Options/>
     {/if}
+    {#if $openView == 'about'}
+    <About/>
+    {/if}
+    {#if $openView == 'help'}
+    <Help/>
+    {/if}
+
   </div>
 </div>
-
-<style>
-  @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: var(--mc3);
-  }
-  button {
-    color:var(--white-text);
-    background-color: var(--mc3);
-  }
-  .lists * {
-    background-color: #f9f9f9;
-  }
-  button:hover {
-    background-color: var(--mc2)
-  }
-
-  .placeholder {
-    color: var(--grey-text);
-  }
-
-  .clearable-input > input {
-    border-color: #bdc0ff;
-    background-color: #f9f9f9;
-  }
-  .clearable-input > input:focus {
-    outline-color: #060714;
-  }
-
-  .options-wrapper {
-    background-color: #f9f9f9;
-  }
-
-  h2 {
-    color: var(--mc3);
-  }
-}
-</style>
