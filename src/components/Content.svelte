@@ -24,31 +24,32 @@
     let glowUp1 = false;
     let glowUp2 = false;
 
-  //   // Light/Dark Mode functions
-  //   const STORAGE_KEY = 'theme';
-  // const DARK_PREFERENCE = '(prefers-color-scheme: dark)';
+  function updateDarkMode() {
+    if ($optionDarkMode === 'Light') {
+      document.documentElement.classList.remove("dark")
+      document.documentElement.classList.add("light")
+    } else if ($optionDarkMode === 'Dark') {
+      document.documentElement.classList.remove("light")
+      document.documentElement.classList.add("dark")
+    } else if ($optionDarkMode === 'System' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.remove("light")
+      document.documentElement.classList.add("dark")
+    } else { 
+      document.documentElement.classList.remove("dark")
+      document.documentElement.classList.add("light") 
+    }
+  };
 
-  // const THEMES = {
-  //   DARK: 'dark',
-  //   LIGHT: 'light',
-  // };
-
-  // const prefersDarkThemes = () => window.matchMedia(DARK_PREFERENCE).matches;
-
-  // const toggleTheme = () => {
-  //   const stored = localStorage.getItem(STORAGE_KEY);
-
-  //   if (stored) {
-  //     // clear storage
-  //     localStorage.removeItem(STORAGE_KEY);
-  //   } else {
-  //     // store opposite of preference
-  //     localStorage.setItem(STORAGE_KEY, prefersDarkThemes() ? THEMES.LIGHT : THEMES.DARK);
-  //   }
-
-  //   // TODO: apply new theme
-  // };
+  $: $optionDarkMode, updateDarkMode(); // Rerun when value changes.
   
+  const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+  if (darkModeQuery.addEventListener) {
+    darkModeQuery.addEventListener('change', updateDarkMode)
+  } else {
+    darkModeQuery.addListener(updateDarkMode)
+  };
+
   function getNewList(query, type, options, load_flag, prevQuery) {
     if (isNewValidQuery(prevQuery, query)) {
       if (load_flag == "r") {
@@ -253,10 +254,9 @@
 // Handle shortcuts on window
   function handleWindowKeydown(event) {
     // Debug shortcut
-    if (event.altKey == true && event.key == 'd') {
-      event.preventDefault();
-      console.log($optionAutoSubmit);
-    };
+    // if (event.altKey == true && event.key == 'd') {
+    //   event.preventDefault();
+    // };
     if ($openView !== null) return;
     if (
         (event.altKey == true && event.key == 'c') ||
@@ -355,3 +355,45 @@
 
   </div>
 </div>
+
+<style global>
+:root, :root.light {
+  --glowStart: #242424;
+  --glowPeak: #535bf2;
+  --glowEnd: #53d5f2;
+  --bg1: #ffffff;
+  --bg2: #f9f9f9;
+  --bg3: #f2f1f1;
+  --mc1: #535bf2;
+  --mc2: #646cff;
+  /* Button Hover */
+  --mc3: #747bff;
+  --white-text: #effbff;
+  --grey-text:#939393;
+  --light-grey-text: #656565;
+
+  color: hsl(237, 86%, 5%);
+  background-color: #ffffff;
+}
+
+:root.dark {
+  --glowStart: #242424;
+  --glowPeak: #535bf2;
+  --glowEnd: #53d5f2;
+  --bg1: #242424;
+  --bg2: #282828;
+  --bg3: #313131;
+  --mc1: #535bf2;
+  --mc2: #646cff;
+  /* Button Hover */
+  --mc3: #747bff;
+  --white-text: #effbff;
+  --grey-text:#656565;
+  --light-grey-text: #939393;
+
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  color-scheme: dark;
+}
+</style>

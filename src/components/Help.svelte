@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { fly } from 'svelte/transition';
+    import { fly, scale } from 'svelte/transition';
     import { openView } from '../store/stores';
+    
 
     let helpView = 'intro';
 
