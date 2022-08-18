@@ -6,7 +6,7 @@
     import Options from './Options.svelte';
     import About from './About.svelte';
     import Help from './Help.svelte';
-  
+
     let meaning = null;
     let prevMeaning = null;
     let vocab:String = null;
@@ -23,6 +23,31 @@
     const noResponse = [{"word":"No Results"}];
     let glowUp1 = false;
     let glowUp2 = false;
+
+  //   // Light/Dark Mode functions
+  //   const STORAGE_KEY = 'theme';
+  // const DARK_PREFERENCE = '(prefers-color-scheme: dark)';
+
+  // const THEMES = {
+  //   DARK: 'dark',
+  //   LIGHT: 'light',
+  // };
+
+  // const prefersDarkThemes = () => window.matchMedia(DARK_PREFERENCE).matches;
+
+  // const toggleTheme = () => {
+  //   const stored = localStorage.getItem(STORAGE_KEY);
+
+  //   if (stored) {
+  //     // clear storage
+  //     localStorage.removeItem(STORAGE_KEY);
+  //   } else {
+  //     // store opposite of preference
+  //     localStorage.setItem(STORAGE_KEY, prefersDarkThemes() ? THEMES.LIGHT : THEMES.DARK);
+  //   }
+
+  //   // TODO: apply new theme
+  // };
   
   function getNewList(query, type, options, load_flag, prevQuery) {
     if (isNewValidQuery(prevQuery, query)) {
@@ -149,6 +174,7 @@
   };  
   
   function submitTimerV() {
+    if ($optionAutoSubmit) {
     resetList2Timer();
     glowUp2 = true;
     console.log("Fones Input Event Called")
@@ -163,6 +189,9 @@
         glowUp2 = false;
         console.log("Called API for vocab.")
       }, 2000)};
+    } else {
+      return
+    }
   };
 
   // Functions for the little X buttons
@@ -223,8 +252,17 @@
 
 // Handle shortcuts on window
   function handleWindowKeydown(event) {
+    // Debug shortcut
+    if (event.altKey == true && event.key == 'd') {
+      event.preventDefault();
+      console.log($optionAutoSubmit);
+    };
     if ($openView !== null) return;
-    if (event.altKey == true && event.key == 'c') {
+    if (
+        (event.altKey == true && event.key == 'c') ||
+        (event.altKey == true && event.key == 'ç')
+        ) {
+      event.preventDefault();
       clearA();
       clearB();
     };

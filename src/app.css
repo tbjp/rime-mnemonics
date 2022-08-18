@@ -1,18 +1,4 @@
 :root {
-  --glowStart: #242424;
-  --glowPeak: #535bf2;
-  --glowEnd: #53d5f2;
-  --bg1: #242424;
-  --bg2: #282828;
-  --bg3: #313131;
-  --mc1: #535bf2;
-  --mc2: #646cff;
-  /* Button Hover */
-  --mc3: #747bff;
-  --white-text: #effbff;
-  --grey-text:#656565;
-  --light-grey-text: #939393;
-
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
@@ -29,7 +15,47 @@
   -webkit-text-size-adjust: 100%;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --glowStart: #242424;
+    --glowPeak: #535bf2;
+    --glowEnd: #53d5f2;
+    --bg1: #242424;
+    --bg2: #282828;
+    --bg3: #313131;
+    --mc1: #535bf2;
+    --mc2: #646cff;
+    /* Button Hover */
+    --mc3: #747bff;
+    --white-text: #effbff;
+    --grey-text:#656565;
+    --light-grey-text: #939393;
 
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
+  }
+}
+
+@media (prefers-color-scheme: light), (prefers-color-scheme: no-preference) {
+  :root {
+    --glowStart: #242424;
+    --glowPeak: #535bf2;
+    --glowEnd: #53d5f2;
+    --bg1: #ffffff;
+    --bg2: #f9f9f9;
+    --bg3: #f2f1f1;
+    --mc1: #535bf2;
+    --mc2: #646cff;
+    /* Button Hover */
+    --mc3: #747bff;
+    --white-text: #effbff;
+    --grey-text:#939393;
+    --light-grey-text: #656565;
+
+    color: hsl(237, 86%, 5%);
+    background-color: #ffffff;
+  }
+}
 
 a {
   font-weight: 500;
@@ -386,58 +412,4 @@ li {
   margin: 0;
   height: 0.5em;
   padding: 2.5em 0;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --glowStart: #242424;
-    --glowPeak: #535bf2;
-    --glowEnd: #53d5f2;
-    --bg1: #ffffff;
-    --bg2: #f9f9f9;
-    --bg3: #f2f1f1;
-    --mc1: #535bf2;
-    --mc2: #646cff;
-    /* Button Hover */
-    --mc3: #747bff;
-    --white-text: #effbff;
-    --grey-text:#939393;
-    --light-grey-text: #656565;
-
-    color: hsl(237, 86%, 5%);
-    background-color: #ffffff;
-  }
-  /* a:hover {
-    color: var(--mc3);
-  }
-  button {
-    color:var(--white-text);
-    background-color: var(--mc3);
-  }
-  .lists * {
-    background-color: #f9f9f9;
-  }
-  button:hover {
-    background-color: var(--mc2)
-  }
-
-  .placeholder {
-    color: var(--grey-text);
-  }
-
-  .clearable-input > input {
-    border-color: #bdc0ff;
-    background-color: #f9f9f9;
-  }
-  .clearable-input > input:focus {
-    outline-color: #060714;
-  }
-
-  .options-wrapper {
-    background-color: #f9f9f9;
-  }
-
-  h2 {
-    color: var(--mc3);
-  } */
 }
