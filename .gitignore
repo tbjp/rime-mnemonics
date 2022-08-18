@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 cmds.txt
+deploy.ps1
 node_modules
 dist
 dist-ssr
@@ -23,3 +24,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+rimekey
+rimekey.pub
