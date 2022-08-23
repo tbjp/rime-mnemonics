@@ -26,9 +26,10 @@
     let glowUp2 = false;
 
   $: $optionDarkMode, updateDarkMode(); // Rerun when value changes.
-  $: $optionSpanish, ($autoRunOnce = true);
-  $: $optionNearRhymes, ($autoRunOnce = true);
+  $: $optionSpanish, $autoRunOnce = true;
+  $: $optionNearRhymes, $autoRunOnce = true;
   $: $openView, rerunQueriesOnHome();
+  $: console.log('Auto run once = ' + $autoRunOnce);
 
   function clearAll() { // May be used for topics option so left for now.
     if ($openView === 'options') { // Otherwise causes error on load.
