@@ -3,6 +3,8 @@ import type { Writable } from "svelte/store";
 
 export const openView: Writable<null | 'options' | 'help' | 'about'> = writable(null)
 
+export const autoRunOnce: Writable<boolean> = writable(false)
+
 const optionDarkModeStored = localStorage.optionDarkMode
 export const optionDarkMode: Writable<'Dark' | 'Light' | 'System'> = writable(optionDarkModeStored || 'System')
 optionDarkMode.subscribe((value) => localStorage.optionDarkMode = value)
@@ -18,3 +20,6 @@ optionNearRhymes.subscribe((value) => localStorage.optionNearRhymes = String(val
 
 export const optionTopicMode: Writable<boolean> = writable<boolean>(localStorage.optionTopicMode === 'true' || false)
 optionTopicMode.subscribe((value) => localStorage.optionTopicMode = String(value))
+
+export const optionSpanish: Writable<boolean> = writable<boolean>(localStorage.optionSpanish === 'true' || false)
+optionSpanish.subscribe((value) => localStorage.optionSpanish = String(value))

@@ -2,7 +2,8 @@
     import { onMount } from 'svelte';
     import type { loop_guard } from 'svelte/internal';
     import { fly } from 'svelte/transition';
-    import { openView, optionDarkMode, optionAutoSubmit, optionButtons, optionNearRhymes, optionTopicMode } from '../store/stores';
+    import { tick } from 'svelte';
+    import { openView, autoRunOnce, optionDarkMode, optionAutoSubmit, optionButtons, optionNearRhymes, optionTopicMode, optionSpanish } from '../store/stores';
     import Options from './Options.svelte';
     import About from './About.svelte';
     import Help from './Help.svelte';
@@ -24,6 +25,30 @@
     let glowUp1 = false;
     let glowUp2 = false;
 
+  $: $optionDarkMode, updateDarkMode(); // Rerun when value changes.
+  $: $optionSpanish, ($autoRunOnce = true);
+  $: $optionNearRhymes, ($autoRunOnce = true);
+  $: $openView, rerunQueriesOnHome();
+
+  function clearAll() { // May be used for topics option so left for now.
+    if ($openView === 'options') { // Otherwise causes error on load.
+      clearA();clearB();}};
+
+  async function rerunQueriesOnHome() {
+    if ($openView === null && $autoRunOnce === true) {
+      await tick();
+      unblockPrevVars();
+      submitTimerM();
+      submitTimerV();
+      $autoRunOnce = false;
+    };
+  };
+
+  function unblockPrevVars() {
+    prevMeaning = 'longunlikelystringabcd';
+    prevVocab = 'longunlikelystringdbca';
+  };
+
   function updateDarkMode() {
     if ($optionDarkMode === 'Light') {
       document.documentElement.classList.remove("dark")
@@ -39,8 +64,6 @@
       document.documentElement.classList.add("light") 
     }
   };
-
-  $: $optionDarkMode, updateDarkMode(); // Rerun when value changes.
   
   const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -101,7 +124,10 @@
           return null
         };
         const trimmed = query.trim();
-        const preppedQuery = typeCode + trimmed + options;
+        let preppedQuery = typeCode + trimmed + options;
+        if ($optionSpanish) {
+          preppedQuery += "&v=es"
+        }
         return preppedQuery;
       } else {
       return null
@@ -110,13 +136,23 @@
   
   async function fetchRhymes(preppedQuery, load_flag) {
     try {
-      if (load_flag == "r") {
+      if (load_flag === "r") {
         rhymesLoading = true} else { fonesLoading = true};
       const response = await fetch("https://api.datamuse.com/words?" + preppedQuery);
       if (!response.ok) {
         throw new Error(`HTTP error: ${response.status}`);
-      }
+      };
       const data = await response.json();
+      if ($optionNearRhymes && load_flag === 'r') {
+        const preppedQueryNry = preppedQuery.replace('rel_rhy=','rel_nry=')
+        const responseNry = await fetch("https://api.datamuse.com/words?" + preppedQueryNry);
+        if (!responseNry.ok) {
+          throw new Error(`HTTP error: ${responseNry.status}`);
+        };
+      const dataNry = await responseNry.json();
+      const dataConcat = data.concat(dataNry);
+      return dataConcat;
+      };
       return data;
     }
     catch(error) {
@@ -153,7 +189,7 @@
   let vocabTimer;
   
   function submitTimerM() {
-    if ($optionAutoSubmit) {
+    if ($optionAutoSubmit || $autoRunOnce) {
       resetList1Timer();
       console.log("Rime Input Event Called");
       console.log(meaning)
@@ -175,7 +211,7 @@
   };  
   
   function submitTimerV() {
-    if ($optionAutoSubmit) {
+    if ($optionAutoSubmit || $autoRunOnce) {
     resetList2Timer();
     glowUp2 = true;
     console.log("Fones Input Event Called")
@@ -198,17 +234,17 @@
   // Functions for the little X buttons
 
   function clearA() {
-    meaning = "";
+    meaning = null;
     rhymesList = null;
-    prevMeaning = "";
-    resetList1Timer();
+    prevMeaning = null;
+    if ($openView === null) {resetList1Timer();};
   };
 
   function clearB() {
     vocab = null;
     fonesList = null;
     prevVocab = null;
-    resetList2Timer();
+    if ($openView === null) {resetList2Timer();};
   };
 
   function resetList1Timer() {
@@ -267,6 +303,7 @@
       clearB();
     };
   };
+
 </script>
 
 <svelte:window on:keydown={handleWindowKeydown}/>
